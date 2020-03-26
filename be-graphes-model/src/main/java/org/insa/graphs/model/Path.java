@@ -30,12 +30,30 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
+     * 
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
-        List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+    	if (nodes.size() == 0)
+            return new Path(graph);
+        if (nodes.size() == 1)
+            return new Path(graph, nodes.get(0));
+
+        List<Arc> arcs = new ArrayList<>();
+        for (int i = 1; i < nodes.size(); i++) {
+            Node node = nodes.get(i);
+            Node previousNode = nodes.get(i - 1);
+            List<Arc> successors = previousNode.getSuccessors();
+            Arc min = null;
+            for (Arc successor : successors) {
+                if (successor.getDestination().equals(node) &&
+                        (min == null || successor.getMinimumTravelTime() < min.getMinimumTravelTime()))
+                    min = successor;
+            }
+            if (min == null)
+                throw new IllegalArgumentException("Two consecutive nodes are not connected in the graph");
+            arcs.add(min);
+        }
         return new Path(graph, arcs);
     }
 
@@ -55,27 +73,27 @@ public class Path {
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
-        List<Arc> arcs = new ArrayList<Arc>();
-        int i=0;       
-      	Node dest = null;
-      	List<Node> subNodes = nodes.subList(0, nodes.size()-2);
-        for(Node node : subNodes) {
-        	if(nodes.size()>1)
-          		dest = nodes.get(1+i);
-        	Arc newArc = null;
-        	float shortest = Float.MAX_VALUE;
-        	for(Arc arc : node.getSuccessors()) {
-        		if(arc.getLength() < shortest && arc.getDestination() != dest ) {
-        			shortest = arc.getLength();
-        			newArc = arc;
-        		}
-        	}
-        	if(newArc == null) 
-    			throw new IllegalArgumentException("Liste de nodes non valide"); 		
-        	arcs.add(newArc);
-        	i++;
+        if (nodes.size() == 0)
+            return new Path(graph);
+        if (nodes.size() == 1)
+            return new Path(graph, nodes.get(0));
+
+        List<Arc> arcs = new ArrayList<>();
+        for (int i = 1; i < nodes.size(); i++) {
+            Node node = nodes.get(i);
+            Node previousNode = nodes.get(i - 1);
+            List<Arc> successors = previousNode.getSuccessors();
+            Arc min = null;
+            for (Arc successor : successors) {
+                if (successor.getDestination().equals(node) && (min == null || successor.getLength() < min.getLength()))
+                    min = successor;
+            }
+            if (min == null)
+                throw new IllegalArgumentException("Two consecutive nodes are not connected in the graph");
+            arcs.add(min);
         }
         return new Path(graph, arcs);
+
     }
 
     /**
