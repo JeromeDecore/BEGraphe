@@ -65,6 +65,11 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     protected int indexLeft(int index) {
         return index * 2 + 1;
     }
+    
+    protected int indexRight(int index) {
+        return (index + 1) * 2;
+    }
+
 
     /**
      * Internal method to percolate up in the heap.
@@ -213,5 +218,23 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     public String toString() {
         return BinaryHeapFormatter.toStringTree(this, 8);
     }
+
+	public boolean isValid() {
+		for(int i=0; i <= /*indexParent(*/currentSize/* -1)*/; i++) {
+			E element = array.get(i);
+			if(indexLeft(i) < currentSize) {
+				E leftChild = array.get(indexLeft(i));
+                if (leftChild.compareTo(element) < 0)
+                    return false;
+			}
+            if (indexRight(i) < currentSize) {
+                E rightChild = array.get(indexRight(i));
+                if (rightChild.compareTo(element) < 0)
+                    return false;
+            }
+		}
+		return true;
+	}
+		
 
 }

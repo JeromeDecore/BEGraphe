@@ -27,9 +27,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
     	final int nbNodes = graph.size();
     	final List<Node> nodes = graph.getNodes();
-    
-        ShortestPathSolution solution = null;
-        
+           
         //Binary heap for labels
         PriorityQueue<Label> heap = new BinaryHeap<>();
         		
@@ -46,11 +44,22 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         labels[s.getId()].setCost(0);
         heap.insert(labels[s.getId()]);
         
-        while (!(heap.isEmpty())) {
+        int i = 0;
+        boolean destAtteinte = false;
+        Node desti = data.getDestination();
+        Label destiLabel = labels[desti.getId()];
+        
+        while (!(heap.isEmpty()) && !(destAtteinte)) {
+        	i++;
         	Label currentLabel = heap.deleteMin();
         	currentLabel.mark();
         	Node currentNode = currentLabel.getCurrentNode();
+        	if(currentNode == desti)
+            	destAtteinte = true;
         	
+        	System.out.print(" Label marque : cout = " + currentLabel.getCost()+ " ; " + 
+        			+ currentNode.getSuccessors().size() + " successeurs ;"
+        			+ "heap valide :" + ((BinaryHeap<Label>)heap).isValid() + "\n");
         	for(Arc arc : currentNode.getSuccessors()) {
         		Node dest = arc.getDestination();
         		Label destLabel = labels[dest.getId()];
@@ -71,8 +80,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		}
         	}
         }
-        Node desti = data.getDestination();
-        Label destiLabel = labels[desti.getId()];
+        
         
         if(Double.isInfinite(destiLabel.getCost())) {
         	return new ShortestPathSolution(data, AbstractSolution.Status.INFEASIBLE);
@@ -87,6 +95,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	path.add(arc);
         	currentLabel = labels[arc.getOrigin().getId()];
         }
+        
+        System.out.println("Nb arcs plus court chemin : " + path.size());
+        System.out.println("Nb iterations : " + i);
         
         Collections.reverse(path);
         

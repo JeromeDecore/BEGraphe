@@ -10,6 +10,14 @@ public class Label implements Comparable<Label>{
 	private double cost;
 	private Arc pere;
 	
+    public Label(Node node) {
+        this.currentNode = node;
+        marque = false;
+        cost = Double.POSITIVE_INFINITY;
+        pere = null;
+    }
+
+	
 	public Label(Node current, boolean marque, double cost, Arc pere) {
 		this.currentNode = current;
 		this.marque = marque;
@@ -51,6 +59,10 @@ public class Label implements Comparable<Label>{
 	}
 	
 	public int compareTo(Label l) {
-		return Double.compare(cost, l.cost);
+		int comp = Double.compare(cost, l.getCost());
+		if(comp == 0 && this.getClass() == LabelStar.class && l.getClass() == LabelStar.class)
+			return Double.compare(((LabelStar)this).getEstimatedCost(), ((LabelStar)l).getEstimatedCost());
+		else
+			return comp;
 	}
 }
